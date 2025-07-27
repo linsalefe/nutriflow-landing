@@ -1,4 +1,6 @@
 // src/app/page.tsx
+'use client';
+
 import { Container, Box } from '@mui/material';
 import Hero from '../components/landing/Hero';
 import Features from '../components/landing/Features';
@@ -10,7 +12,7 @@ import Footer from '../components/landing/Footer';
 export default function HomePage() {
   return (
     <Container maxWidth="lg" disableGutters>
-      <Box sx={{ bgcolor: 'background.default', color: 'text.primary' }}>
+      <Box component="main" sx={{ bgcolor: 'background.default', color: 'text.primary' }}>
         <Hero />
         <Features />
         <Testimonials />
