@@ -10,92 +10,81 @@ import {
   AccordionDetails,
   useTheme,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import { motion } from 'framer-motion';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { alpha } from '@mui/material/styles';
 
 const faqs = [
   {
-    id: 'faq1',
-    question: 'Como funciona a análise por foto?',
+    question: 'Como o NutriFlow calcula calorias e macros?',
     answer:
-      'Você envia uma foto e nossa IA retorna calorias e macros detalhados em segundos, sem precisar de cadastro adicional.',
+      'Nosso algoritmo de visão computacional analisa a foto da refeição identificando ingredientes e quantidades, cruzando com nossa base nutricional para estimar calorias, proteínas, carboidratos e gorduras.',
   },
   {
-    id: 'faq2',
-    question: 'Qual o limite de uso?',
+    question: 'Preciso criar perfil e informar meus dados?',
     answer:
-      'Planos pagos oferecem uso ilimitado de análises de fotos, histórico completo e recomendações personalizadas.',
+      'Sim! No cadastro inicial você informa peso, altura e objetivos (emagrecer, ganhar massa, manter peso) para que o NutriFlow personalize suas recomendações.',
   },
   {
-    id: 'faq3',
+    question: 'Como funciona o histórico de refeições?',
+    answer:
+      'Tudo que você fotografa fica salvo no seu dashboard. Você pode filtrar por data, macro ou refeição para revisar sua evolução ao longo do tempo.',
+  },
+  {
     question: 'Posso cancelar a qualquer momento?',
     answer:
-      'Sim! Sem fidelidade: cancele sua assinatura pelo painel de usuário sempre que quiser, sem taxas extras.',
+      'Claro. Você tem garantia de 30 dias. Depois disso, pode cancelar a assinatura diretamente no painel de configurações, sem burocracia.',
   },
 ];
 
 export default function FAQ() {
   const theme = useTheme();
-  const [expanded, setExpanded] = React.useState<string | false>(false);
-
-  const handleChange =
-    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
-    };
 
   return (
     <Box
       component="section"
+      id="faq"
       sx={{
         py: 8,
         px: 2,
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.default,
       }}
     >
       <Typography variant="h4" align="center" gutterBottom>
         Perguntas Frequentes
       </Typography>
 
-      {faqs.map((f, i) => (
-        <motion.div
-          key={f.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.1, duration: 0.4 }}
-        >
+      <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
+        {faqs.map((faq, idx) => (
           <Accordion
-            expanded={expanded === f.id}
-            onChange={handleChange(f.id)}
+            key={idx}
             sx={{
-              boxShadow: 'none',
-              borderBottom: `1px solid ${theme.palette.divider}`,
+              borderRadius: 2,
+              mb: 2,
+              '&:before': { display: 'none' },
             }}
-            disableGutters
           >
             <AccordionSummary
-              expandIcon={
-                expanded === f.id ? (
-                  <RemoveIcon color="primary" />
-                ) : (
-                  <AddIcon color="primary" />
-                )
-              }
-              aria-controls={`${f.id}-content`}
-              id={`${f.id}-header`}
+              expandIcon={<ExpandMoreIcon />}
               sx={{
-                px: 0,
-                '& .MuiAccordionSummary-content': { margin: 0 },
+                bgcolor: alpha(theme.palette.primary.main, 0.05),
+                '& .MuiAccordionSummary-content': { m: 0 },
               }}
             >
-              <Typography variant="h6">{f.question}</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
+                {faq.question}
+              </Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ px: 0, pt: 1 }}>
-              <Typography variant="body2">{f.answer}</Typography>
+            <AccordionDetails>
+              <Typography variant="body2" color="text.secondary">
+                {faq.answer}
+              </Typography>
             </AccordionDetails>
           </Accordion>
-        </motion.div>
-      ))}
+        ))}
+      </Box>
     </Box>
   );
 }

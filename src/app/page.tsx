@@ -1,9 +1,10 @@
-// src/app/page.tsx
 'use client';
 
 import React from 'react';
+import { Container, Box } from '@mui/material';
 import Header from '../components/landing/Header';
 import Hero from '../components/landing/Hero';
+import FloatingCTA from '../components/landing/FloatingCTA';
 import Countdown from '../components/landing/Countdown';
 import TrustBadges from '../components/landing/TrustBadges';
 import Demo from '../components/landing/Demo';
@@ -12,35 +13,29 @@ import Testimonials from '../components/landing/Testimonials';
 import PricingTeaser from '../components/landing/PricingTeaser';
 import FAQ from '../components/landing/FAQ';
 import Footer from '../components/landing/Footer';
-import { Container, Box } from '@mui/material';
+import ChatbotAI from '../components/landing/ChatbotAI';
+import BackToTop from '../components/landing/BackToTop';
 
 export default function HomePage() {
   return (
     <>
       <Header />
-      {/* Hero full-width */}
       <Hero />
-
+      <FloatingCTA />
       <Container maxWidth="lg" disableGutters>
-        <Box component="main" sx={{ bgcolor: 'background.default', color: 'text.primary' }}>
+        <Box component="main">
           <Countdown />
           <TrustBadges />
           <Demo />
-          <Box id="features">
-            <Features />
-          </Box>
-          <Box id="testimonials">
-            <Testimonials />
-          </Box>
-          <Box id="pricing">
-            <PricingTeaser />
-          </Box>
-          <Box id="faq">
-            <FAQ />
-          </Box>
+          <Box id="features"><Features /></Box>
+          <Box id="testimonials"><Testimonials /></Box>
+          <Box id="pricing"><PricingTeaser /></Box>
+          <Box id="faq"><FAQ /></Box>
         </Box>
         <Footer />
       </Container>
+      <ChatbotAI />
+      <BackToTop />
     </>
   );
 }

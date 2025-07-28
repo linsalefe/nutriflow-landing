@@ -1,25 +1,32 @@
 'use client';
+
 import React from 'react';
 import { Box, Typography, Grid, SvgIcon, useTheme } from '@mui/material';
 
 const badges = [
-  { label: 'SSL Seguro', icon: (
+  {
+    label: 'SSL Seguro',
+    icon: (
       <SvgIcon viewBox="0 0 24 24">
         <path d="M12 1L3 5v6c0 5 3.8 9.7 9 11 5.2-1.3 9-6 9-11V5l-9-4z" />
       </SvgIcon>
-    )
+    ),
   },
-  { label: 'Pagamento Confiável', icon: (
+  {
+    label: 'Pagamento Confiável',
+    icon: (
       <SvgIcon viewBox="0 0 24 24">
         <path d="M2 6h20v2H2zm0 4h20v2H2zm0 4h20v2H2z" />
       </SvgIcon>
-    )
+    ),
   },
-  { label: 'Suporte 24/7', icon: (
+  {
+    label: 'Suporte 24/7',
+    icon: (
       <SvgIcon viewBox="0 0 24 24">
-        <path d="M12 1a11 11 0 0 0-11 11h2a9 9 0 1 1 9 9v2a11 11 0 0 0 0-22z"/>
+        <path d="M12 1a11 11 0 0 0-11 11h2a9 9 0 1 1 9 9v2a11 11 0 0 0 0-22z" />
       </SvgIcon>
-    )
+    ),
   },
 ];
 
@@ -30,7 +37,7 @@ export default function TrustBadges() {
       <Grid container spacing={4} justifyContent="center">
         {badges.map((b) => (
           <Grid item xs={12} sm={4} key={b.label} sx={{ textAlign: 'center' }}>
-            <Box sx={{ mb:1, color: theme.palette.primary.main }}>{b.icon}</Box>
+            <Box sx={{ mb: 1, color: theme.palette.primary.main }}>{b.icon}</Box>
             <Typography variant="subtitle1">{b.label}</Typography>
           </Grid>
         ))}

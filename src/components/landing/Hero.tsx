@@ -1,4 +1,3 @@
-// src/components/landing/Hero.tsx
 'use client';
 
 import React from 'react';
@@ -15,11 +14,13 @@ import {
   useMediaQuery,
   alpha,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { motion, useViewportScroll, useTransform } from 'framer-motion';
 
 export default function Hero() {
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('md'));
+  const { scrollY } = useViewportScroll();
+  const y = useTransform(scrollY, [0, 300], [0, 50]);
 
   return (
     <Box
@@ -32,7 +33,6 @@ export default function Hero() {
     >
       <Container maxWidth="lg">
         <Grid container spacing={6} alignItems="center">
-          {/* Texto + CTA */}
           <Grid item xs={12} md={6}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -108,11 +108,7 @@ export default function Hero() {
                   </Button>
                   <Typography
                     variant="caption"
-                    sx={{
-                      mt: 1,
-                      display: 'block',
-                      color: theme.palette.text.secondary,
-                    }}
+                    sx={{ mt: 1, display: 'block', color: theme.palette.text.secondary }}
                   >
                     30 dias de garantia – cancele quando quiser
                   </Typography>
@@ -121,7 +117,6 @@ export default function Hero() {
             </motion.div>
           </Grid>
 
-          {/* Imagem */}
           <Grid
             item
             xs={12}
@@ -130,14 +125,14 @@ export default function Hero() {
               display: 'flex',
               justifyContent: { xs: 'center', md: 'flex-end' },
               alignItems: 'center',
-              pl: { xs: 0, md: 8 }, // espaçamento maior à esquerda no desktop
+              pl: { xs: 0, md: 8 },
             }}
           >
             <motion.div
+              style={{ y }}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              style={{ textAlign: isSm ? 'center' : 'right' }}
             >
               <Box
                 component="img"

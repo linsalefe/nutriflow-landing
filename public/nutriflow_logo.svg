@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="300" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#66BB6A"/>
+      <stop offset="100%" stop-color="#388E3C"/>
+    </linearGradient>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#26C6DA"/>
+      <stop offset="100%" stop-color="#0288D1"/>
+    </linearGradient>
+  </defs>
+  <!-- Folha -->
+  <path d="M300,40 C360,40 400,120 300,220 C200,120 240,40 300,40 Z" fill="url(#leafGradient)"/>
+  <!-- Traço fluido -->
+  <path d="M300,220 C360,230 440,180 500,220" stroke="url(#flowGradient)" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <!-- Texto -->
+  <text x="0" y="260" font-family="Arial, sans-serif" font-size="80" fill="#1B5E20">Nutriflow</text>
+</svg>

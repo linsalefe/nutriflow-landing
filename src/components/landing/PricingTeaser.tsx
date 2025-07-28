@@ -1,172 +1,178 @@
 // src/components/landing/PricingTeaser.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
+  Typography,
   Grid,
   Card,
   CardContent,
-  Typography,
   Button,
-  Chip,
+  Switch,
+  FormControlLabel,
   useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 
-const tiers = [
+const plans = [
   {
+    key: 'essencial',
     title: 'Essencial',
-    price: '19,90',
-    perks: [
-      'Análises ilimitadas de fotos',
-      'Histórico completo',
-      'Recomendações básicas',
-    ],
-    popular: false,
+    priceMonthly: 19.9,
+    priceAnnual: 199.0, // 2 meses grátis
+    perks: ['Análises ilimitadas', 'Histórico completo', 'Recomendações básicas'],
   },
   {
+    key: 'pro',
     title: 'Pro',
-    price: '39,90',
-    perks: [
-      'Tudo do Essencial',
-      'Exportação de dados',
-      'Metas personalizadas',
-    ],
+    priceMonthly: 39.9,
+    priceAnnual: 399.0,
+    perks: ['Tudo do Essencial', 'Exportação de dados', 'Metas personalizadas'],
     popular: true,
   },
   {
+    key: 'premium',
     title: 'Premium',
-    price: '69,90',
-    perks: [
-      'Tudo do Pro',
-      'Chat prioritário',
-      'Conteúdos exclusivos',
-    ],
-    popular: false,
+    priceMonthly: 69.9,
+    priceAnnual: 699.0,
+    perks: ['Tudo do Pro', 'Chat prioritário', 'Conteúdos exclusivos'],
   },
 ];
 
 export default function PricingTeaser() {
   const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  const [annual, setAnnual] = useState(false);
 
   return (
     <Box
       component="section"
       id="pricing"
-      sx={{
-        py: 8,
-        px: 2,
-        backgroundColor: theme.palette.background.paper,
-      }}
+      sx={{ py: 8, px: 2, backgroundColor: theme.palette.background.paper }}
     >
       <Typography variant="h4" align="center" gutterBottom>
         Planos Simples. Resultados Reais.
       </Typography>
 
-      <Grid container spacing={4} justifyContent="center">
-        {tiers.map((tier, i) => (
-          <Grid item xs={12} sm={6} md={4} key={tier.title}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.2, duration: 0.6 }}
-            >
-              <Card
-                sx={{
-                  position: 'relative',
-                  borderRadius: 2,
-                  boxShadow: tier.popular ? 6 : 3,
-                  border: tier.popular
-                    ? `2px solid ${theme.palette.primary.main}`
-                    : 'none',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    boxShadow: tier.popular ? 8 : 4,
-                    transform: 'translateY(-4px)',
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                {tier.popular && (
-                  <Chip
-                    label="Mais Popular"
-                    color="primary"
-                    size="small"
-                    sx={{
-                      position: 'absolute',
-                      top: 16,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      fontWeight: 600,
-                    }}
-                  />
-                )}
+      <Box textAlign="center" mb={4}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={annual}
+              onChange={() => setAnnual((prev) => !prev)}
+              color="primary"
+            />
+          }
+          label={annual ? 'Cobrança Anual (2 meses grátis)' : 'Cobrança Mensal'}
+        />
+      </Box>
 
-                <CardContent
+      <Grid container spacing={4} justifyContent="center">
+        {plans.map((plan, i) => {
+          const price = annual ? plan.priceAnnual : plan.priceMonthly;
+          return (
+            <Grid item xs={12} sm={6} md={4} key={plan.key}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+              >
+                <Card
                   sx={{
-                    pt: tier.popular ? 6 : 4,
-                    flexGrow: 1,
+                    position: 'relative',
+                    borderRadius: 2,
+                    boxShadow: plan.popular ? 6 : 3,
+                    border: plan.popular
+                      ? `2px solid ${theme.palette.primary.main}`
+                      : 'none',
+                    height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    '&:hover': {
+                      transform: 'scale(1.03)',
+                      boxShadow: plan.popular ? 8 : 4,
+                    },
                   }}
                 >
-                  <Typography variant="h6" gutterBottom>
-                    {tier.title}
-                  </Typography>
-                  <Typography variant="h3" sx={{ my: 2 }}>
-                    R$ {tier.price}
-                  </Typography>
-                  <Box
-                    component="ul"
-                    sx={{
-                      listStyle: 'none',
-                      p: 0,
-                      mb: 3,
-                      textAlign: 'left',
-                      width: '100%',
-                    }}
-                  >
-                    {tier.perks.map((p) => (
+                  {plan.popular && (
+                    <Box
+                      component="span"
+                      sx={{
+                        position: 'absolute',
+                        top: 16,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        px: 2,
+                        py: 0.5,
+                        bgcolor: theme.palette.primary.main,
+                        color: theme.palette.primary.contrastText,
+                        borderRadius: 1,
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Mais Popular
+                    </Box>
+                  )}
+
+                  <CardContent sx={{ pt: plan.popular ? 6 : 4, flexGrow: 1 }}>
+                    <Typography variant="h6" gutterBottom align="center">
+                      {plan.title}
+                    </Typography>
+                    <Typography
+                      variant={isSm ? 'h4' : 'h3'}
+                      align="center"
+                      sx={{ my: 2 }}
+                    >
+                      R$ {price.toFixed(2)}{' '}
+                      <Typography component="span" variant="body2">
+                        /{annual ? 'ano' : 'mês'}
+                      </Typography>
+                    </Typography>
+
+                    <Box component="ul" sx={{ listStyle: 'none', p: 0, mb: 4 }}>
+                      {plan.perks.map((perk) => (
+                        <Typography
+                          component="li"
+                          variant="body2"
+                          sx={{ mb: 1 }}
+                          key={perk}
+                        >
+                          • {perk}
+                        </Typography>
+                      ))}
                       <Typography
-                        key={p}
                         component="li"
                         variant="body2"
-                        sx={{ mb: 1 }}
+                        sx={{ fontStyle: 'italic' }}
                       >
-                        • {p}
+                        • E-book de Receitas Saudáveis (bônus)
                       </Typography>
-                    ))}
-                    <Typography
-                      component="li"
-                      variant="body2"
-                      sx={{ mb: 1, fontStyle: 'italic' }}
+                    </Box>
+
+                    <Button
+                      fullWidth
+                      variant={plan.popular ? 'contained' : 'outlined'}
+                      color="primary"
+                      href="/signup"
+                      sx={{
+                        textTransform: 'none',
+                        borderRadius: 2,
+                        py: 1.5,
+                      }}
                     >
-                      • E-book de Receitas Saudáveis (bônus)
-                    </Typography>
-                  </Box>
-                  <Button
-                    href="/signup"
-                    variant={tier.popular ? 'contained' : 'outlined'}
-                    size="medium"
-                    sx={{
-                      borderRadius: 2,
-                      px: 4,
-                      ...(tier.popular && {
-                        color: theme.palette.primary.contrastText,
-                      }),
-                    }}
-                  >
-                    Assinar {tier.title}
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </Grid>
-        ))}
+                      Assinar {plan.title}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
+          );
+        })}
       </Grid>
     </Box>
   );
