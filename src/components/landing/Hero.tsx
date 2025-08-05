@@ -26,11 +26,34 @@ export default function Hero() {
     <Box
       component="section"
       sx={{
+        position: 'relative',
         width: '100%',
         bgcolor: alpha(theme.palette.primary.main, 0.08),
         py: { xs: 8, md: 12 },
       }}
     >
+      {/* CTA Desktop no canto superior direito */}
+      {!isSm && (
+        <Button
+          variant="contained"
+          size="medium"
+          href="/signup"
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            textTransform: 'none',
+            borderRadius: 2,
+            fontWeight: 600,
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            '&:hover': { bgcolor: theme.palette.primary.dark },
+          }}
+        >
+          Assine Agora
+        </Button>
+      )}
+
       <Container maxWidth="lg">
         <Grid container spacing={6} alignItems="center">
           <Grid item xs={12} md={6}>
@@ -136,8 +159,8 @@ export default function Hero() {
             >
               <Box
                 component="img"
-                src="/hero.gif"
-                alt="GIF mostrando interação no NutriFlow"
+                src="/transparent-nutriflow.png"
+                alt="Usuária segurando celular com NutriFlow"
                 sx={{
                   width: isSm ? 280 : 400,
                   borderRadius: 3,
@@ -149,5 +172,5 @@ export default function Hero() {
         </Grid>
       </Container>
     </Box>
-);
+  );
 }
