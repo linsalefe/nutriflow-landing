@@ -1,3 +1,4 @@
+// src/app/head.tsx
 export default function Head() {
   return (
     <>
@@ -8,7 +9,7 @@ export default function Head() {
         content="NutriFlow é seu assistente nutricional por IA que analisa fotos de refeições, calcula calorias e macros e entrega recomendações personalizadas 24/7. Assine por R$ 19,90/mês com 30 dias de garantia."
       />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <link rel="canonical" href="https://seu-dominio.com.br/" />
+      <link rel="canonical" href="https://nutriflow.cloud/" />
 
       {/* Open Graph */}
       <meta property="og:type" content="website" />
@@ -17,8 +18,8 @@ export default function Head() {
         property="og:description"
         content="Analise fotos de refeições, receba cálculos de calorias e macros e tenha planos nutricionais por R$ 19,90/mês."
       />
-      <meta property="og:url" content="https://seu-dominio.com.br/" />
-      <meta property="og:image" content="https://seu-dominio.com.br/og-image.png" />
+      <meta property="og:url" content="https://nutriflow.cloud/" />
+      <meta property="og:image" content="https://nutriflow.cloud/og-image.png" />
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -27,7 +28,7 @@ export default function Head() {
         name="twitter:description"
         content="Fotografe suas refeições e receba recomendações nutricionais personalizadas por R$ 19,90/mês."
       />
-      <meta name="twitter:image" content="https://seu-dominio.com.br/og-image.png" />
+      <meta name="twitter:image" content="https://nutriflow.cloud/og-image.png" />
 
       {/* JSON-LD Structured Data */}
       <script
@@ -37,13 +38,14 @@ export default function Head() {
             "@context": "https://schema.org",
             "@type": "Product",
             name: "NutriFlow",
-            image: ["https://seu-dominio.com.br/og-image.png"],
-            description: "Assistente nutricional por IA – planos a partir de R$19,90/mês.",
+            image: ["https://nutriflow.cloud/og-image.png"],
+            description:
+              "Assistente nutricional por IA – planos a partir de R$19,90/mês.",
             offers: {
               "@type": "Offer",
               price: "19.90",
               priceCurrency: "BRL",
-              url: "https://seu-dominio.com.br/",
+              url: "https://nutriflow.cloud/",
             },
             aggregateRating: {
               "@type": "AggregateRating",
@@ -51,6 +53,24 @@ export default function Head() {
               reviewCount: "132",
             },
           }),
+        }}
+      />
+
+      {/* Google Analytics 4 */}
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+      />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+              page_path: window.location.pathname
+            });
+          `,
         }}
       />
     </>

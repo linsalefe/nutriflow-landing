@@ -1,4 +1,3 @@
-// src/components/landing/FloatingCTA.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -23,7 +22,9 @@ export default function FloatingCTA() {
       <Fab
         variant="extended"
         color="secondary"
-        href="#pricing"
+        href="https://global.disruptybr.com.br/zoyi4e1idi"
+        target="_blank"
+        rel="noopener noreferrer"
         sx={{
           position: 'fixed',
           bottom: 16,

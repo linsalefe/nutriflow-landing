@@ -136,8 +136,8 @@ export default function Hero() {
             >
               <Box
                 component="img"
-                src="/transparent-nutriflow.png"
-                alt="Usuária segurando celular com NutriFlow"
+                src="/hero.gif"
+                alt="GIF mostrando interação no NutriFlow"
                 sx={{
                   width: isSm ? 280 : 400,
                   borderRadius: 3,
@@ -149,5 +149,5 @@ export default function Hero() {
         </Grid>
       </Container>
     </Box>
-  );
+);
 }

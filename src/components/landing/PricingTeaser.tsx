@@ -1,4 +1,3 @@
-// src/components/landing/PricingTeaser.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -23,6 +22,7 @@ const plans = [
     priceMonthly: 19.9,
     priceAnnual: 199.0, // 2 meses grátis
     perks: ['Análises ilimitadas', 'Histórico completo', 'Recomendações básicas'],
+    url: 'https://global.disruptybr.com.br/zoyi4e1idi',
   },
   {
     key: 'pro',
@@ -31,6 +31,7 @@ const plans = [
     priceAnnual: 399.0,
     perks: ['Tudo do Essencial', 'Exportação de dados', 'Metas personalizadas'],
     popular: true,
+    url: 'https://global.disruptybr.com.br/l81iq',
   },
   {
     key: 'premium',
@@ -38,6 +39,7 @@ const plans = [
     priceMonthly: 69.9,
     priceAnnual: 699.0,
     perks: ['Tudo do Pro', 'Chat prioritário', 'Conteúdos exclusivos'],
+    url: 'https://global.disruptybr.com.br/konz1',
   },
 ];
 
@@ -158,7 +160,9 @@ export default function PricingTeaser() {
                       fullWidth
                       variant={plan.popular ? 'contained' : 'outlined'}
                       color="primary"
-                      href="/signup"
+                      href={plan.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
                         textTransform: 'none',
                         borderRadius: 2,
