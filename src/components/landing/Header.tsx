@@ -1,4 +1,3 @@
-// src/components/landing/Header.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -21,7 +20,8 @@ import Image from 'next/image';
 
 export default function Header() {
   const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
+  // Considera mobile para telas <= md (960px)
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const sections = [
     { id: 'features', label: 'Funcionalidades' },
@@ -51,74 +51,67 @@ export default function Header() {
         sx={{
           bgcolor: '#fafafa',
           borderBottom: `1px solid ${theme.palette.divider}`,
-          py: 1,
         }}
       >
-        <Toolbar disableGutters sx={{ px: { xs: 2, md: 6 }, gap: 4 }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            px: { xs: 2, md: 6 },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
           {/* Logo */}
           <Box
             onClick={() => scrollTo('hero')}
             sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           >
-            <Image src="/logo.png" alt="NutriFlow Logo" width={64} height={64} />
+            <Image src="/logo.png" alt="NutriFlow Logo" width={48} height={48} />
           </Box>
 
-          {/* Navegação Desktop */}
-          {!isSm && (
-            <Box sx={{ display: 'flex', gap: 2, flexGrow: 1 }}>
+          {/* Navegação + CTA (apenas desktop) */}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1, ml: 4 }}>
               {sections.map(({ id, label }) => (
                 <Button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  variant="outlined"
+                  variant="text"
                   size="small"
                   sx={{
-                    color: '#fff',
-                    borderColor: '#fff',
                     textTransform: 'none',
                     fontWeight: 500,
+                    color: theme.palette.text.primary,
                     '&:hover': {
-                      borderColor: theme.palette.primary.light,
                       color: theme.palette.primary.light,
-                      backgroundColor: 'transparent',
                     },
                   }}
                 >
                   {label}
                 </Button>
               ))}
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => scrollTo('pricing')}
+                sx={{
+                  ml: 2,
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  bgcolor: theme.palette.primary.main,
+                  color: theme.palette.primary.contrastText,
+                  '&:hover': { bgcolor: theme.palette.primary.dark },
+                }}
+              >
+                Assine Agora
+              </Button>
             </Box>
           )}
 
-          <Box sx={{ flexGrow: 1 }} />
-
-          {/* CTA Desktop */}
-          {!isSm && (
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => scrollTo('pricing')}
-              sx={{
-                textTransform: 'none',
-                borderRadius: 2,
-                fontWeight: 600,
-                borderColor: '#fff',
-                color: '#fff',
-                px: 3,
-                '&:hover': {
-                  borderColor: theme.palette.primary.light,
-                  color: theme.palette.primary.light,
-                  backgroundColor: 'transparent',
-                },
-              }}
-            >
-              Assine Agora
-            </Button>
-          )}
-
           {/* Menu Mobile */}
-          {isSm && (
-            <IconButton onClick={() => setOpen(true)} sx={{ color: '#fff' }}>
+          {isMobile && (
+            <IconButton onClick={() => setOpen(true)} sx={{ color: theme.palette.text.primary }}>
               <MenuIcon />
             </IconButton>
           )}
