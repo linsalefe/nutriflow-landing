@@ -1,183 +1,262 @@
+// src/components/landing/PricingTeaser.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
+  Container,
   Typography,
-  Grid,
   Card,
   CardContent,
   Button,
-  Switch,
-  FormControlLabel,
+  Chip,
+  Stack,
   useTheme,
-  useMediaQuery,
+  alpha,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import StarIcon from '@mui/icons-material/Star';
 
-const plans = [
-  {
-    key: 'essencial',
-    title: 'Essencial',
-    priceMonthly: 19.9,
-    priceAnnual: 199.0, // 2 meses grátis
-    perks: ['Análises ilimitadas', 'Histórico completo', 'Recomendações básicas'],
-    url: 'https://global.disruptybr.com.br/zoyi4e1idi',
-  },
-  {
-    key: 'pro',
-    title: 'Pro',
-    priceMonthly: 39.9,
-    priceAnnual: 399.0,
-    perks: ['Tudo do Essencial', 'Exportação de dados', 'Metas personalizadas'],
-    popular: true,
-    url: 'https://global.disruptybr.com.br/l81iq',
-  },
-  {
-    key: 'premium',
-    title: 'Premium',
-    priceMonthly: 69.9,
-    priceAnnual: 699.0,
-    perks: ['Tudo do Pro', 'Chat prioritário', 'Conteúdos exclusivos'],
-    url: 'https://global.disruptybr.com.br/konz1',
-  },
-];
+// motion(Card) para evitar 'as any'
+const MotionCard = motion(Card);
+
+type Plan = {
+  key: string;
+  title: string;
+  price: string;
+  period?: string;
+  subtitle?: string;
+  features: string[];
+  highlight?: boolean;
+  ctaHref: string;
+  badge?: string;
+};
 
 export default function PricingTeaser() {
   const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
-  const [annual, setAnnual] = useState(false);
+  const reduced = useReducedMotion();
+
+  const plans: Plan[] = [
+    {
+      key: 'mensal',
+      title: 'Mensal',
+      price: 'R$ 29,90',
+      period: 'por mês',
+      subtitle: 'Flexibilidade total',
+      features: [
+        'Análise por foto e texto',
+        'Histórico de refeições',
+        'Recomendações básicas',
+      ],
+      ctaHref: '/signup',
+    },
+    {
+      key: 'anual',
+      title: 'Anual',
+      price: 'R$ 197',
+      period: 'R$ 16,40/mês',
+      subtitle: 'Economia de R$ 161',
+      features: [
+        'Tudo do Mensal',
+        'Planos personalizados',
+        'Relatórios avançados',
+      ],
+      highlight: true,
+      ctaHref: '/signup?plan=anual',
+      badge: 'MAIS POPULAR',
+    },
+    {
+      key: 'gratis',
+      title: 'Teste Grátis 7 dias',
+      price: 'R$ 0',
+      period: 'sem cartão',
+      subtitle: 'Experimente agora',
+      features: [
+        'Acesso imediato',
+        'Cancelamento fácil',
+        'Sem compromisso',
+      ],
+      ctaHref: '/signup?trial=1',
+    },
+  ];
 
   return (
     <Box
       component="section"
-      id="pricing"
-      sx={{ py: 8, px: 2, backgroundColor: theme.palette.background.paper }}
+      sx={{
+        py: { xs: 6, md: 10 },
+        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.04)}, ${alpha(theme.palette.secondary.main, 0.06)})`,
+      }}
+      id="pricing-teaser"
     >
-      <Typography variant="h4" align="center" gutterBottom>
-        Planos Simples. Resultados Reais.
-      </Typography>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+          <Chip
+            icon={<LocalOfferIcon />}
+            label="Oferta de lançamento"
+            sx={{
+              mb: 2,
+              fontWeight: 600,
+              bgcolor: alpha(theme.palette.primary.main, 0.12),
+              color: theme.palette.primary.main,
+              '& .MuiChip-icon': { color: theme.palette.primary.main },
+            }}
+          />
+          <Typography
+            component="h2"
+            variant="h4"
+            sx={{
+              fontWeight: 800,
+              mb: 1,
+              background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Planos simples, foco em resultado
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Comece grátis e evolua conforme suas metas.
+          </Typography>
+        </Box>
 
-      <Box textAlign="center" mb={4}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={annual}
-              onChange={() => setAnnual((prev) => !prev)}
-              color="primary"
-            />
-          }
-          label={annual ? 'Cobrança Anual (2 meses grátis)' : 'Cobrança Mensal'}
-        />
-      </Box>
-
-      <Grid container spacing={4} justifyContent="center">
-        {plans.map((plan, i) => {
-          const price = annual ? plan.priceAnnual : plan.priceMonthly;
-          return (
-            <Grid item xs={12} sm={6} md={4} key={plan.key}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-              >
-                <Card
+        {/* Grid de cards (CSS Grid) */}
+        <Box
+          sx={{
+            display: 'grid',
+            gap: { xs: 3, md: 4 },
+            gridTemplateColumns: {
+              xs: '1fr',
+              md: 'repeat(3, minmax(0, 1fr))',
+            },
+            alignItems: 'stretch',
+          }}
+        >
+          {plans.map((plan, idx) => (
+            <MotionCard
+              key={plan.key}
+              initial={reduced ? false : { opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: idx * 0.08 }}
+              sx={{
+                height: '100%',
+                position: 'relative',
+                borderRadius: 4,
+                border: `1px solid ${alpha(theme.palette.primary.main, plan.highlight ? 0.3 : 0.12)}`,
+                boxShadow: plan.highlight ? '0 20px 60px rgba(0,0,0,0.18)' : '0 12px 40px rgba(0,0,0,0.10)',
+                background:
+                  plan.highlight
+                    ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.06)}, ${alpha(theme.palette.secondary.main, 0.08)})`
+                    : 'background.paper',
+                backdropFilter: plan.highlight ? 'blur(8px)' : undefined,
+              }}
+            >
+              {plan.badge && (
+                <Chip
+                  size="small"
+                  icon={<StarIcon sx={{ fontSize: 16 }} />}
+                  label={plan.badge}
                   sx={{
-                    position: 'relative',
-                    borderRadius: 2,
-                    boxShadow: plan.popular ? 6 : 3,
-                    border: plan.popular
-                      ? `2px solid ${theme.palette.primary.main}`
-                      : 'none',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'transform 0.3s, box-shadow 0.3s',
-                    '&:hover': {
-                      transform: 'scale(1.03)',
-                      boxShadow: plan.popular ? 8 : 4,
-                    },
+                    position: 'absolute',
+                    top: 12,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    bgcolor: theme.palette.primary.main,
+                    color: 'white',
+                    fontWeight: 800,
+                    '& .MuiChip-icon': { color: 'white' },
+                  }}
+                />
+              )}
+              <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 1 }}>
+                  {plan.title}
+                </Typography>
+
+                <Box sx={{ my: 1 }}>
+                  <Typography
+                    variant="h4"
+                    aria-label={`Preço ${plan.price}`}
+                    sx={{
+                      fontWeight: 900,
+                      lineHeight: 1,
+                      fontVariantNumeric: 'tabular-nums',
+                      color: theme.palette.primary.main,
+                    }}
+                  >
+                    {plan.price}
+                  </Typography>
+                  {plan.period && (
+                    <Typography variant="caption" color="text.secondary">
+                      {plan.period}
+                    </Typography>
+                  )}
+                </Box>
+
+                {plan.subtitle && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {plan.subtitle}
+                  </Typography>
+                )}
+
+                <Stack component="ul" spacing={1.2} sx={{ listStyle: 'none', pl: 0, mb: 3 }}>
+                  {plan.features.map((feat) => (
+                    <Box key={feat} component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CheckCircleIcon
+                        fontSize="small"
+                        sx={{ color: plan.highlight ? theme.palette.primary.main : theme.palette.success.main }}
+                        aria-hidden
+                      />
+                      <Typography variant="body2">{feat}</Typography>
+                    </Box>
+                  ))}
+                </Stack>
+
+                <Button
+                  fullWidth
+                  variant={plan.highlight ? 'contained' : 'outlined'}
+                  size="large"
+                  href={plan.ctaHref}
+                  sx={{
+                    textTransform: 'none',
+                    borderRadius: 3,
+                    fontWeight: 800,
+                    height: 52,
+                    ...(plan.highlight
+                      ? {
+                          background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.18)',
+                          '&:hover': {
+                            background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.secondary.dark})`,
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 12px 28px rgba(0,0,0,0.22)',
+                          },
+                        }
+                      : {
+                          borderWidth: 2,
+                          '&:hover': { borderWidth: 2, transform: 'translateY(-2px)' },
+                        }),
+                    transition: 'all 0.25s ease',
                   }}
                 >
-                  {plan.popular && (
-                    <Box
-                      component="span"
-                      sx={{
-                        position: 'absolute',
-                        top: 16,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        px: 2,
-                        py: 0.5,
-                        bgcolor: theme.palette.primary.main,
-                        color: theme.palette.primary.contrastText,
-                        borderRadius: 1,
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                      }}
-                    >
-                      Mais Popular
-                    </Box>
-                  )}
+                  {plan.key === 'gratis' ? 'Começar Grátis' : 'Começar Agora'}
+                </Button>
+              </CardContent>
+            </MotionCard>
+          ))}
+        </Box>
 
-                  <CardContent sx={{ pt: plan.popular ? 6 : 4, flexGrow: 1 }}>
-                    <Typography variant="h6" gutterBottom align="center">
-                      {plan.title}
-                    </Typography>
-                    <Typography
-                      variant={isSm ? 'h4' : 'h3'}
-                      align="center"
-                      sx={{ my: 2 }}
-                    >
-                      R$ {price.toFixed(2)}{' '}
-                      <Typography component="span" variant="body2">
-                        /{annual ? 'ano' : 'mês'}
-                      </Typography>
-                    </Typography>
-
-                    <Box component="ul" sx={{ listStyle: 'none', p: 0, mb: 4 }}>
-                      {plan.perks.map((perk) => (
-                        <Typography
-                          component="li"
-                          variant="body2"
-                          sx={{ mb: 1 }}
-                          key={perk}
-                        >
-                          • {perk}
-                        </Typography>
-                      ))}
-                      <Typography
-                        component="li"
-                        variant="body2"
-                        sx={{ fontStyle: 'italic' }}
-                      >
-                        • E-book de Receitas Saudáveis (bônus)
-                      </Typography>
-                    </Box>
-
-                    <Button
-                      fullWidth
-                      variant={plan.popular ? 'contained' : 'outlined'}
-                      color="primary"
-                      href={plan.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        textTransform: 'none',
-                        borderRadius: 2,
-                        py: 1.5,
-                      }}
-                    >
-                      Assinar {plan.title}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </Grid>
-          );
-        })}
-      </Grid>
+        {/* Observação/garantias */}
+        <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Typography variant="caption" color="text.secondary">
+            7 dias grátis em qualquer plano. Cancele quando quiser.
+          </Typography>
+        </Box>
+      </Container>
     </Box>
   );
 }

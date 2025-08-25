@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // gera HTML/CSS/JS estático em ./out
+  output: 'export',
 
-const nextConfig: NextConfig = {
-  /* config options here */
+  // se você usar <Image>, isso evita otimização server-side
+  images: { unoptimized: true },
+
+  // opcional: alguns servidores curtem /path/ em vez de /path
+  // trailingSlash: true,
 };
 
-export default nextConfig;
+module.exports = nextConfig;
