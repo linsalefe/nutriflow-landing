@@ -244,7 +244,6 @@ export default function Head() {
 
       {/* Preload da logo para performance */}
       <link rel="preload" href="/logo-nutriflow.png" as="image" type="image/png" />
-      <link rel="preload" href="/nutriflow_logo.svg" as="image" type="image/svg+xml" />
     </>
   );
 }

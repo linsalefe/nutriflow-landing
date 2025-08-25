@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import {
   motion,
-  useViewportScroll,
+  useScroll,
   useTransform,
   useReducedMotion,
   type MotionStyle,
@@ -32,8 +32,10 @@ export default function Hero() {
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('md'));
   const reduced = useReducedMotion();
-  const { scrollY } = useViewportScroll();
-  const y = useTransform(scrollY, [0, 300], [0, 50]); // parallax
+
+  // framer-motion v12
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 300], [0, 50]);
   const motionStyle: MotionStyle | undefined = reduced ? undefined : { y };
 
   const [email, setEmail] = useState('');
@@ -51,11 +53,12 @@ export default function Hero() {
         position: 'relative',
         width: '100%',
         background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.secondary.main, 0.08)} 100%)`,
-        py: { xs: 6, md: 10 },
+        py: { xs: 4, md: 10 }, // menor no mobile
+        pb: { xs: 12, md: 10 }, // reserva espaço pro CTA fixo no mobile
         overflow: 'hidden',
       }}
     >
-      {/* Elementos decorativos de fundo */}
+      {/* BG decorativo */}
       <Box
         aria-hidden
         sx={{
@@ -83,7 +86,7 @@ export default function Hero() {
         }}
       />
 
-      {/* CTA Desktop no canto superior direito */}
+      {/* CTA topo (desktop) */}
       {!isSm && (
         <Button
           variant="contained"
@@ -115,23 +118,23 @@ export default function Hero() {
       )}
 
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-        {/* Layout principal (2 colunas) */}
+        {/* Layout 2 col (stack no mobile) */}
         <Box
           sx={{
             display: 'grid',
             gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-            gap: { xs: 4, md: 6 },
+            gap: { xs: 3, md: 6 },
             alignItems: 'center',
           }}
         >
-          {/* Coluna esquerda */}
+          {/* Esquerda */}
           <Box>
             <motion.div
               initial={reduced ? false : { opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
-              {/* Badge de destaque */}
+              {/* Badge */}
               <motion.div
                 initial={reduced ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -140,11 +143,11 @@ export default function Hero() {
                 <Chip
                   label="🚀 Tecnologia exclusiva no Brasil"
                   sx={{
-                    mb: 3,
+                    mb: { xs: 2, md: 3 },
                     bgcolor: alpha(theme.palette.primary.main, 0.15),
                     color: theme.palette.primary.main,
                     fontWeight: 600,
-                    fontSize: '0.85rem',
+                    fontSize: { xs: '0.75rem', md: '0.85rem' },
                     px: 2,
                     py: 0.5,
                     borderRadius: 2,
@@ -153,18 +156,19 @@ export default function Hero() {
                 />
               </motion.div>
 
-              {/* Headline Principal */}
+              {/* Headline */}
               <Typography
                 component="h1"
-                variant={isSm ? 'h3' : 'h2'}
+                variant="h2"
                 sx={{
                   fontWeight: 800,
+                  fontSize: { xs: '2rem', sm: '2.3rem', md: '3rem' },
                   background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  mb: 2,
-                  lineHeight: 1.2,
+                  mb: { xs: 1.5, md: 2 },
+                  lineHeight: { xs: 1.15, md: 1.2 },
                   letterSpacing: '-0.02em',
                 }}
               >
@@ -173,20 +177,21 @@ export default function Hero() {
 
               {/* Subheadline */}
               <Typography
-                variant={isSm ? 'h6' : 'h5'}
+                variant="h6"
                 sx={{
                   color: theme.palette.text.primary,
-                  mb: 4,
+                  mb: { xs: 3, md: 4 },
                   maxWidth: 520,
                   fontWeight: 500,
                   lineHeight: 1.4,
+                  fontSize: { xs: '1rem', md: '1.25rem' },
                 }}
               >
                 Descubra as calorias exatas com <strong>1 foto</strong>. Sua jornada para uma alimentação mais consciente começa aqui.
               </Typography>
 
-              {/* Benefits List */}
-              <Stack spacing={2} sx={{ mb: 4 }}>
+              {/* Benefícios */}
+              <Stack spacing={{ xs: 1.25, md: 2 }} sx={{ mb: { xs: 3, md: 4 } }}>
                 {benefits.map((benefit, index) => (
                   <motion.div
                     key={benefit.text}
@@ -194,15 +199,15 @@ export default function Hero() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Box
                         aria-hidden
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 32,
-                          height: 32,
+                          width: 28,
+                          height: 28,
                           borderRadius: '50%',
                           bgcolor: alpha(theme.palette.primary.main, 0.15),
                           color: theme.palette.primary.main,
@@ -210,7 +215,7 @@ export default function Hero() {
                       >
                         {benefit.icon}
                       </Box>
-                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                      <Typography variant="body1" sx={{ fontWeight: 500, fontSize: { xs: '0.95rem', md: '1rem' } }}>
                         {benefit.text}
                       </Typography>
                     </Box>
@@ -218,7 +223,7 @@ export default function Hero() {
                 ))}
               </Stack>
 
-              {/* Pricing Card */}
+              {/* Card de preço/lead */}
               <motion.div
                 initial={reduced ? false : { opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -227,43 +232,43 @@ export default function Hero() {
                 <Card
                   sx={{
                     maxWidth: { xs: '100%', md: 480 },
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
+                    boxShadow: { xs: '0 8px 24px rgba(0,0,0,0.08)', md: '0 12px 40px rgba(0,0,0,0.1)' },
                     borderRadius: 4,
                     border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
                     background: 'rgba(255,255,255,0.95)',
                     backdropFilter: 'blur(10px)',
                   }}
                 >
-                  <CardContent sx={{ p: 4 }}>
-                    {/* Destaque da oferta */}
-                    <Box sx={{ textAlign: 'center', mb: 3 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.main, mb: 1 }}>
+                  <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                    {/* Oferta */}
+                    <Box sx={{ textAlign: 'center', mb: { xs: 2, md: 3 } }}>
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.primary.main, mb: 0.5, fontSize: { xs: '1rem', md: '1.1rem' } }}>
                         OFERTA ESPECIAL DE LANÇAMENTO
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', md: '0.9rem' } }}>
                         Primeiros 1000 usuários ganham desconto exclusivo
                       </Typography>
                     </Box>
 
-                    {/* Planos (CSS Grid) */}
+                    {/* Planos */}
                     <Box
                       sx={{
                         display: 'grid',
                         gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                        gap: 2,
-                        mb: 3,
+                        gap: 1.5,
+                        mb: { xs: 2.5, md: 3 },
                       }}
                     >
                       <Box
                         sx={{
-                          p: 2,
+                          p: { xs: 1.5, md: 2 },
                           borderRadius: 2,
                           border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
                           textAlign: 'center',
                           position: 'relative',
                         }}
                       >
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontSize: { xs: '0.75rem', md: '0.85rem' } }}>
                           MENSAL
                         </Typography>
                         <Typography
@@ -272,6 +277,7 @@ export default function Hero() {
                             fontWeight: 800,
                             color: theme.palette.primary.main,
                             fontVariantNumeric: 'tabular-nums',
+                            fontSize: { xs: '1.6rem', md: '2rem' },
                           }}
                         >
                           R$ 29,90
@@ -283,7 +289,7 @@ export default function Hero() {
 
                       <Box
                         sx={{
-                          p: 2,
+                          p: { xs: 1.5, md: 2 },
                           borderRadius: 2,
                           background: `linear-gradient(135deg, ${theme.palette.primary.main}15, ${theme.palette.secondary.main}10)`,
                           border: `2px solid ${theme.palette.primary.main}`,
@@ -307,7 +313,7 @@ export default function Hero() {
                             '& .MuiChip-icon': { color: 'white' },
                           }}
                         />
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1, mt: 1 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, mt: 1, fontSize: { xs: '0.75rem', md: '0.85rem' } }}>
                           ANUAL
                         </Typography>
                         <Typography
@@ -316,6 +322,7 @@ export default function Hero() {
                             fontWeight: 800,
                             color: theme.palette.primary.main,
                             fontVariantNumeric: 'tabular-nums',
+                            fontSize: { xs: '1.6rem', md: '2rem' },
                           }}
                         >
                           R$ 197
@@ -326,7 +333,7 @@ export default function Hero() {
                       </Box>
                     </Box>
 
-                    {/* Campo de email */}
+                    {/* Email */}
                     <TextField
                       fullWidth
                       placeholder="Seu melhor e-mail"
@@ -334,7 +341,7 @@ export default function Hero() {
                       onChange={(e) => setEmail(e.target.value)}
                       size="medium"
                       sx={{
-                        mb: 3,
+                        mb: { xs: 2, md: 3 },
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
                           '&:hover fieldset': { borderColor: theme.palette.primary.main },
@@ -343,7 +350,7 @@ export default function Hero() {
                       inputProps={{ 'aria-label': 'Seu e-mail' }}
                     />
 
-                    {/* CTA Principal */}
+                    {/* CTA principal */}
                     <Button
                       fullWidth
                       variant="contained"
@@ -352,8 +359,8 @@ export default function Hero() {
                       sx={{
                         textTransform: 'none',
                         borderRadius: 3,
-                        height: 56,
-                        fontSize: '1.1rem',
+                        height: { xs: 50, md: 56 },
+                        fontSize: { xs: '1rem', md: '1.1rem' },
                         fontWeight: 700,
                         background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
                         boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
@@ -370,7 +377,7 @@ export default function Hero() {
                     </Button>
 
                     {/* Garantias */}
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, justifyContent: 'center' }}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
                       {['✅ 7 dias grátis', '✅ Garantia 30 dias', '✅ Cancele quando quiser'].map((g) => (
                         <Typography
                           key={g}
@@ -380,7 +387,7 @@ export default function Hero() {
                             fontWeight: 600,
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '0.8rem',
+                            fontSize: { xs: '0.75rem', md: '0.8rem' },
                           }}
                         >
                           {g}
@@ -393,9 +400,10 @@ export default function Hero() {
             </motion.div>
           </Box>
 
-          {/* Coluna direita (imagem) */}
+          {/* Direita (imagem) */}
           <Box
             sx={{
+              order: { xs: -1, md: 0 }, // imagem primeiro no mobile
               display: 'flex',
               justifyContent: { xs: 'center', md: 'flex-end' },
               alignItems: 'center',
@@ -412,19 +420,48 @@ export default function Hero() {
                 component="img"
                 src="/transparent-nutriflow.png"
                 alt="Aplicativo NutriFlow mostrando análise nutricional"
+                loading="lazy"
                 sx={{
-                  width: isSm ? 300 : 450,
+                  width: { xs: 260, sm: 300, md: 450 },
                   maxWidth: '100%',
                   height: 'auto',
                   borderRadius: 4,
-                  boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-                  filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.1))',
+                  boxShadow: '0 14px 40px rgba(0,0,0,0.12)',
+                  filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.08))',
                 }}
               />
             </motion.div>
           </Box>
         </Box>
       </Container>
+
+      {/* CTA fixo (mobile) */}
+      {isSm && (
+        <Button
+          href="/signup"
+          variant="contained"
+          size="large"
+          sx={{
+            position: 'fixed',
+            left: 16,
+            right: 16,
+            bottom: 12,
+            height: 48,
+            borderRadius: 3,
+            fontWeight: 800,
+            textTransform: 'none',
+            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            '&:hover': {
+              background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.secondary.dark})`,
+              transform: 'translateY(-1px)',
+            },
+            zIndex: 50,
+          }}
+        >
+          Começar Agora
+        </Button>
+      )}
     </Box>
   );
 }

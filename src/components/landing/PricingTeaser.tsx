@@ -45,11 +45,7 @@ export default function PricingTeaser() {
       price: 'R$ 29,90',
       period: 'por mês',
       subtitle: 'Flexibilidade total',
-      features: [
-        'Análise por foto e texto',
-        'Histórico de refeições',
-        'Recomendações básicas',
-      ],
+      features: ['Análise por foto e texto', 'Histórico de refeições', 'Recomendações básicas'],
       ctaHref: '/signup',
     },
     {
@@ -58,11 +54,7 @@ export default function PricingTeaser() {
       price: 'R$ 197',
       period: 'R$ 16,40/mês',
       subtitle: 'Economia de R$ 161',
-      features: [
-        'Tudo do Mensal',
-        'Planos personalizados',
-        'Relatórios avançados',
-      ],
+      features: ['Tudo do Mensal', 'Planos personalizados', 'Relatórios avançados'],
       highlight: true,
       ctaHref: '/signup?plan=anual',
       badge: 'MAIS POPULAR',
@@ -73,11 +65,7 @@ export default function PricingTeaser() {
       price: 'R$ 0',
       period: 'sem cartão',
       subtitle: 'Experimente agora',
-      features: [
-        'Acesso imediato',
-        'Cancelamento fácil',
-        'Sem compromisso',
-      ],
+      features: ['Acesso imediato', 'Cancelamento fácil', 'Sem compromisso'],
       ctaHref: '/signup?trial=1',
     },
   ];
@@ -86,10 +74,13 @@ export default function PricingTeaser() {
     <Box
       component="section"
       sx={{
-        py: { xs: 6, md: 10 },
-        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.04)}, ${alpha(theme.palette.secondary.main, 0.06)})`,
+        py: { xs: 5, md: 10 },
+        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.04)}, ${alpha(
+          theme.palette.secondary.main,
+          0.06
+        )})`,
       }}
-      id="pricing-teaser"
+      id="pricing" // ancora para CTA do Hero
     >
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
@@ -102,6 +93,8 @@ export default function PricingTeaser() {
               bgcolor: alpha(theme.palette.primary.main, 0.12),
               color: theme.palette.primary.main,
               '& .MuiChip-icon': { color: theme.palette.primary.main },
+              fontSize: { xs: '0.75rem', md: '0.875rem' },
+              height: { xs: 28, md: 32 },
             }}
           />
           <Typography
@@ -110,28 +103,36 @@ export default function PricingTeaser() {
             sx={{
               fontWeight: 800,
               mb: 1,
+              fontSize: { xs: '1.6rem', md: '2.125rem' },
               background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              lineHeight: { xs: 1.2, md: 1.25 },
             }}
           >
             Planos simples, foco em resultado
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
             Comece grátis e evolua conforme suas metas.
           </Typography>
         </Box>
 
-        {/* Grid de cards (CSS Grid) */}
+        {/* Carrossel touch no mobile / grid no desktop */}
         <Box
           sx={{
             display: 'grid',
-            gap: { xs: 3, md: 4 },
-            gridTemplateColumns: {
-              xs: '1fr',
-              md: 'repeat(3, minmax(0, 1fr))',
-            },
+            gap: { xs: 2.5, md: 4 },
+            // Mobile: fluxo em colunas com largura de 85% (carrossel)
+            gridAutoFlow: { xs: 'column', md: 'row' },
+            gridAutoColumns: { xs: '85%', md: 'unset' },
+            gridTemplateColumns: { xs: 'unset', md: 'repeat(3, minmax(0, 1fr))' },
+            overflowX: { xs: 'auto', md: 'visible' },
+            scrollSnapType: { xs: 'x mandatory', md: 'none' },
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorX: { xs: 'contain', md: 'auto' },
+            px: { xs: 1, md: 0 },
+            pb: { xs: 1, md: 0 },
             alignItems: 'stretch',
           }}
         >
@@ -146,13 +147,21 @@ export default function PricingTeaser() {
                 height: '100%',
                 position: 'relative',
                 borderRadius: 4,
-                border: `1px solid ${alpha(theme.palette.primary.main, plan.highlight ? 0.3 : 0.12)}`,
-                boxShadow: plan.highlight ? '0 20px 60px rgba(0,0,0,0.18)' : '0 12px 40px rgba(0,0,0,0.10)',
-                background:
-                  plan.highlight
-                    ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.06)}, ${alpha(theme.palette.secondary.main, 0.08)})`
-                    : 'background.paper',
+                border: `1px solid ${alpha(
+                  theme.palette.primary.main,
+                  plan.highlight ? 0.3 : 0.12
+                )}`,
+                boxShadow: plan.highlight
+                  ? '0 20px 60px rgba(0,0,0,0.18)'
+                  : '0 12px 40px rgba(0,0,0,0.10)',
+                background: plan.highlight
+                  ? `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.06)}, ${alpha(
+                      theme.palette.secondary.main,
+                      0.08
+                    )})`
+                  : 'background.paper',
                 backdropFilter: plan.highlight ? 'blur(8px)' : undefined,
+                scrollSnapAlign: { xs: 'center', md: 'unset' },
               }}
             >
               {plan.badge && (
@@ -173,7 +182,11 @@ export default function PricingTeaser() {
                 />
               )}
               <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-                <Typography variant="overline" color="text.secondary" sx={{ letterSpacing: 1 }}>
+                <Typography
+                  variant="overline"
+                  color="text.secondary"
+                  sx={{ letterSpacing: 1, fontSize: { xs: '0.7rem', md: '0.75rem' } }}
+                >
                   {plan.title}
                 </Typography>
 
@@ -186,24 +199,25 @@ export default function PricingTeaser() {
                       lineHeight: 1,
                       fontVariantNumeric: 'tabular-nums',
                       color: theme.palette.primary.main,
+                      fontSize: { xs: '1.8rem', md: '2.125rem' },
                     }}
                   >
                     {plan.price}
                   </Typography>
                   {plan.period && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.8rem' } }}>
                       {plan.period}
                     </Typography>
                   )}
                 </Box>
 
                 {plan.subtitle && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: { xs: '0.9rem', md: '0.95rem' } }}>
                     {plan.subtitle}
                   </Typography>
                 )}
 
-                <Stack component="ul" spacing={1.2} sx={{ listStyle: 'none', pl: 0, mb: 3 }}>
+                <Stack component="ul" spacing={1.1} sx={{ listStyle: 'none', pl: 0, mb: 3 }}>
                   {plan.features.map((feat) => (
                     <Box key={feat} component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <CheckCircleIcon
@@ -211,7 +225,9 @@ export default function PricingTeaser() {
                         sx={{ color: plan.highlight ? theme.palette.primary.main : theme.palette.success.main }}
                         aria-hidden
                       />
-                      <Typography variant="body2">{feat}</Typography>
+                      <Typography variant="body2" sx={{ fontSize: { xs: '0.9rem', md: '0.95rem' } }}>
+                        {feat}
+                      </Typography>
                     </Box>
                   ))}
                 </Stack>
@@ -225,7 +241,7 @@ export default function PricingTeaser() {
                     textTransform: 'none',
                     borderRadius: 3,
                     fontWeight: 800,
-                    height: 52,
+                    height: { xs: 48, md: 52 },
                     ...(plan.highlight
                       ? {
                           background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
@@ -252,7 +268,7 @@ export default function PricingTeaser() {
 
         {/* Observação/garantias */}
         <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.75rem', md: '0.8rem' } }}>
             7 dias grátis em qualquer plano. Cancele quando quiser.
           </Typography>
         </Box>
