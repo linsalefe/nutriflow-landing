@@ -16,8 +16,10 @@ import {
   useTheme,
   useMediaQuery,
   alpha,
+  Container,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
 
 type Section = { id: string; label: string };
@@ -36,9 +38,9 @@ export default function Header() {
   const [activeId, setActiveId] = useState<string>('');
   const appBarRef = useRef<HTMLDivElement | null>(null);
 
-  // Scroll listener (performático)
+  // Scroll listener
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -54,8 +56,7 @@ export default function Header() {
         if (visible?.target?.id) setActiveId(visible.target.id);
       },
       {
-        // compensa a altura do header
-        rootMargin: `-${(appBarRef.current?.offsetHeight ?? 72) + 8}px 0px -60% 0px`,
+        rootMargin: `-${(appBarRef.current?.offsetHeight ?? 80) + 20}px 0px -60% 0px`,
         threshold: [0.1, 0.25, 0.5, 0.75],
       }
     );
@@ -64,13 +65,12 @@ export default function Header() {
       if (el) io.observe(el);
     });
     return () => io.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sections]);
 
   const smoothScrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const headerH = (appBarRef.current?.offsetHeight ?? 72) + 8;
+    const headerH = (appBarRef.current?.offsetHeight ?? 80) + 20;
     const y = el.getBoundingClientRect().top + window.scrollY - headerH;
     window.scrollTo({ top: y, behavior: 'smooth' });
     setOpen(false);
@@ -80,152 +80,262 @@ export default function Header() {
     <>
       <AppBar
         ref={appBarRef}
-        position="sticky"
-        elevation={scrolled ? 6 : 0}
+        position="fixed"
+        elevation={0}
         sx={{
-          bgcolor: scrolled
-            ? alpha(theme.palette.background.paper, 0.8)
+          bgcolor: scrolled 
+            ? alpha(theme.palette.background.paper, 0.95)
             : 'transparent',
-          color: theme.palette.text.primary,
-          borderBottom: scrolled ? `1px solid ${theme.palette.divider}` : 'transparent',
-          backdropFilter: scrolled ? 'saturate(180%) blur(12px)' : 'none',
-          transition: 'all .25s ease',
-          boxShadow: scrolled ? `0 8px 24px ${alpha('#000', 0.08)}` : 'none',
+          backdropFilter: scrolled ? 'saturate(180%) blur(20px)' : 'none',
+          borderBottom: scrolled 
+            ? `1px solid ${alpha(theme.palette.divider, 0.1)}` 
+            : 'none',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          zIndex: 1300,
         }}
       >
-        <Toolbar
-          disableGutters
-          sx={{
-            px: { xs: 2, md: 6 },
-            minHeight: { xs: 64, md: 72 },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          {/* Logo */}
-          <Box
-            onClick={() => smoothScrollTo('hero')}
-            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-            aria-label="Ir para o topo"
+        <Container maxWidth="xl">
+          <Toolbar
+            disableGutters
+            sx={{
+              minHeight: { xs: 70, md: 80 },
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              px: { xs: 0, sm: 2 },
+            }}
           >
-            <Image
-              src="/logo.png"
-              alt="NutriFlow Logo"
-              width={40}
-              height={40}
-              priority
-              sizes="(max-width: 960px) 40px, 48px"
-              style={{ borderRadius: 8 }}
-            />
-          </Box>
+            {/* Logo */}
+            <Box
+              onClick={() => smoothScrollTo('hero')}
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                cursor: 'pointer',
+                transition: 'transform 0.2s ease',
+                '&:hover': { transform: 'scale(1.05)' }
+              }}
+            >
+              <Image
+                src="/logo.png"
+                alt="NutriFlow"
+                width={44}
+                height={44}
+                priority
+                style={{ borderRadius: 10 }}
+              />
+              <Box 
+                sx={{ 
+                  ml: 1.5,
+                  fontWeight: 800,
+                  fontSize: { xs: 18, md: 20 },
+                  background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  display: { xs: 'none', sm: 'block' }
+                }}
+              >
+                NutriFlow
+              </Box>
+            </Box>
 
-          {/* Navegação desktop */}
-          {!isMobile && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1, ml: 4 }}>
-              {sections.map(({ id, label }) => {
-                const isActive = activeId === id;
-                return (
-                  <Button
-                    key={id}
-                    onClick={() => smoothScrollTo(id)}
-                    variant="text"
-                    size="small"
-                    sx={{
-                      textTransform: 'none',
-                      fontWeight: isActive ? 700 : 500,
-                      color: isActive ? theme.palette.primary.main : theme.palette.text.primary,
-                      pb: 0.5,
-                      borderBottom: '2px solid',
-                      borderColor: isActive ? theme.palette.primary.main : 'transparent',
-                      '&:hover': {
-                        color: theme.palette.primary.main,
-                        borderColor: theme.palette.primary.main,
-                      },
-                    }}
-                  >
-                    {label}
-                  </Button>
-                );
-              })}
+            {/* Desktop Navigation */}
+            {!isMobile && (
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1,
+                bgcolor: alpha(theme.palette.background.paper, 0.8),
+                borderRadius: 50,
+                p: 0.5,
+                backdropFilter: 'blur(10px)',
+                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`
+              }}>
+                {sections.map(({ id, label }) => {
+                  const isActive = activeId === id;
+                  return (
+                    <Button
+                      key={id}
+                      onClick={() => smoothScrollTo(id)}
+                      variant="text"
+                      size="small"
+                      sx={{
+                        minWidth: 'auto',
+                        px: 2,
+                        py: 1,
+                        borderRadius: 20,
+                        textTransform: 'none',
+                        fontWeight: isActive ? 600 : 500,
+                        fontSize: '0.875rem',
+                        color: isActive 
+                          ? theme.palette.primary.contrastText 
+                          : theme.palette.text.primary,
+                        bgcolor: isActive 
+                          ? theme.palette.primary.main 
+                          : 'transparent',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          bgcolor: isActive 
+                            ? theme.palette.primary.dark 
+                            : alpha(theme.palette.primary.main, 0.08),
+                          transform: 'translateY(-1px)',
+                        },
+                      }}
+                    >
+                      {label}
+                    </Button>
+                  );
+                })}
+              </Box>
+            )}
+
+            {/* CTA Button Desktop */}
+            {!isMobile && (
               <Button
                 variant="contained"
-                size="small"
                 onClick={() => smoothScrollTo('pricing')}
                 sx={{
-                  ml: 2,
                   textTransform: 'none',
-                  borderRadius: 2,
-                  fontWeight: 700,
+                  borderRadius: 25,
+                  px: 3,
+                  py: 1.2,
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
                   bgcolor: theme.palette.primary.main,
-                  color: theme.palette.primary.contrastText,
-                  '&:hover': { bgcolor: theme.palette.primary.dark },
+                  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    bgcolor: theme.palette.primary.dark,
+                    transform: 'translateY(-2px)',
+                    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.5)}`,
+                  },
                 }}
               >
                 Assine Agora
               </Button>
-            </Box>
-          )}
+            )}
 
-          {/* Menu Mobile */}
-          {isMobile && (
-            <IconButton
-              aria-label="Abrir menu"
-              onClick={() => setOpen(true)}
-              sx={{ color: theme.palette.text.primary }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-        </Toolbar>
+            {/* Mobile Menu Button */}
+            {isMobile && (
+              <IconButton
+                onClick={() => setOpen(true)}
+                sx={{ 
+                  color: theme.palette.text.primary,
+                  bgcolor: alpha(theme.palette.background.paper, 0.8),
+                  backdropFilter: 'blur(10px)',
+                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  '&:hover': {
+                    bgcolor: alpha(theme.palette.background.paper, 0.9),
+                  }
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+          </Toolbar>
+        </Container>
       </AppBar>
 
-      {/* Drawer Mobile */}
+      {/* Mobile Drawer */}
       <Drawer
-        anchor="left"
+        anchor="right"
         open={open}
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: 280,
+            width: 320,
             bgcolor: alpha(theme.palette.background.paper, 0.98),
-            backdropFilter: 'blur(6px)',
+            backdropFilter: 'blur(20px)',
+            border: 'none',
+            backgroundImage: 'none',
           },
         }}
       >
-        <Box role="presentation" sx={{ p: 1.5 }}>
-          <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}
-            onClick={() => { smoothScrollTo('hero'); }}
-          >
-            <Image src="/logo.png" alt="NutriFlow" width={28} height={28} />
-            <Box sx={{ fontWeight: 800, fontSize: 14 }}>NutriFlow</Box>
+        <Box sx={{ p: 3 }}>
+          {/* Header do Drawer */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 3,
+            pb: 2,
+            borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Image src="/logo.png" alt="NutriFlow" width={32} height={32} />
+              <Box sx={{ 
+                fontWeight: 700, 
+                fontSize: 18,
+                background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>
+                NutriFlow
+              </Box>
+            </Box>
+            <IconButton 
+              onClick={() => setOpen(false)}
+              sx={{ 
+                color: theme.palette.text.secondary,
+                '&:hover': { 
+                  bgcolor: alpha(theme.palette.text.secondary, 0.08) 
+                }
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
           </Box>
-          <List>
+
+          {/* Navigation Items */}
+          <List sx={{ p: 0 }}>
             {sections.map(({ id, label }) => (
-              <ListItem key={id} disablePadding>
-                <ListItemButton onClick={() => smoothScrollTo(id)}>
+              <ListItem key={id} disablePadding sx={{ mb: 1 }}>
+                <ListItemButton 
+                  onClick={() => smoothScrollTo(id)}
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.5,
+                    '&:hover': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    }
+                  }}
+                >
                   <ListItemText
                     primary={label}
                     primaryTypographyProps={{
-                      fontWeight: activeId === id ? 700 : 500,
+                      fontWeight: activeId === id ? 600 : 500,
                       color: activeId === id ? 'primary.main' : 'text.primary',
+                      fontSize: '1rem',
                     }}
                   />
                 </ListItemButton>
               </ListItem>
             ))}
-            <ListItem disablePadding>
-              <ListItemButton onClick={() => smoothScrollTo('pricing')}>
-                <ListItemText
-                  primary="Assine Agora"
-                  primaryTypographyProps={{
-                    fontWeight: 800,
-                    color: 'primary.main',
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
           </List>
+
+          {/* CTA Button Mobile */}
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => smoothScrollTo('pricing')}
+            sx={{
+              mt: 3,
+              py: 1.5,
+              borderRadius: 3,
+              textTransform: 'none',
+              fontWeight: 600,
+              fontSize: '1rem',
+              bgcolor: theme.palette.primary.main,
+              boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.4)}`,
+              '&:hover': { 
+                bgcolor: theme.palette.primary.dark,
+                boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.5)}`,
+              },
+            }}
+          >
+            Assine Agora
+          </Button>
         </Box>
       </Drawer>
     </>

@@ -1,7 +1,7 @@
 // src/components/landing/Features.tsx
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -10,7 +10,11 @@ import {
   CardContent,
   useTheme,
   alpha,
+  IconButton,
+  useMediaQuery,
 } from '@mui/material';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -83,6 +87,61 @@ const features = [
 export default function Features() {
   const theme = useTheme();
   const reduced = useReducedMotion();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Atualiza os estados dos botões de navegação
+  const updateScrollButtons = () => {
+    if (!scrollRef.current) return;
+    
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  };
+
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement) return;
+
+    const handleScroll = () => {
+      updateScrollButtons();
+      
+      // Calcula o índice atual baseado no scroll
+      const cardWidth = scrollElement.clientWidth * 0.85; // 85% como definido no CSS
+      const newIndex = Math.round(scrollElement.scrollLeft / cardWidth);
+      setCurrentIndex(newIndex);
+    };
+
+    scrollElement.addEventListener('scroll', handleScroll);
+    updateScrollButtons();
+
+    return () => scrollElement.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToIndex = (index: number) => {
+    if (!scrollRef.current) return;
+    
+    const cardWidth = scrollRef.current.clientWidth * 0.85;
+    const targetScrollLeft = index * cardWidth;
+    
+    scrollRef.current.scrollTo({
+      left: targetScrollLeft,
+      behavior: 'smooth'
+    });
+  };
+
+  const scrollLeft = () => {
+    const newIndex = Math.max(0, currentIndex - 1);
+    scrollToIndex(newIndex);
+  };
+
+  const scrollRight = () => {
+    const newIndex = Math.min(features.length - 1, currentIndex + 1);
+    scrollToIndex(newIndex);
+  };
 
   return (
     <Box component="section" id="features" sx={{ py: { xs: 6, md: 10 }, backgroundColor: theme.palette.background.paper }}>
@@ -109,105 +168,277 @@ export default function Features() {
           variant="h6"
           align="center"
           color="text.secondary"
-          sx={{ mb: { xs: 4, md: 6 }, maxWidth: 800, mx: 'auto', fontSize: { xs: '1rem', md: '1.25rem' }, px: { xs: 2, md: 0 } }}
+          sx={{ 
+            mb: { xs: 4, md: 6 }, 
+            maxWidth: 800, 
+            mx: 'auto', 
+            fontSize: { xs: '1rem', md: '1.25rem' }, 
+            px: { xs: 2, md: 0 } 
+          }}
         >
           Com o NutriFlow, você não apenas conta calorias — você transforma sua relação com a alimentação e constrói hábitos
           saudáveis sustentáveis para toda a vida!
         </Typography>
 
-        {/* Carrossel touch no mobile / grid no desktop */}
-        <Box
-          sx={{
-            display: 'grid',
-            gap: { xs: 2.5, md: 4 },
-            gridAutoFlow: { xs: 'column', md: 'row' },
-            gridAutoColumns: { xs: '85%', sm: '45%', md: 'unset' },
-            gridTemplateColumns: { xs: 'unset', md: 'repeat(3, minmax(0, 1fr))' },
-            overflowX: { xs: 'auto', md: 'visible' },
-            scrollSnapType: { xs: 'x mandatory', md: 'none' },
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehaviorX: { xs: 'contain', md: 'auto' },
-            px: { xs: 1, md: 0 },
-            pb: { xs: 1, md: 0 },
-            justifyItems: 'stretch',
-            mt: 2,
-          }}
-        >
-          {features.map((f, i) => (
-            <motion.div
-              key={f.title}
-              initial={reduced ? false : { opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ delay: i * 0.08, duration: 0.55 }}
-              style={{ scrollSnapAlign: 'center' } as React.CSSProperties}
-            >
-              <Card
+        {/* Container do carrossel mobile */}
+        {isMobile ? (
+          <Box sx={{ position: 'relative' }}>
+            {/* Botões de navegação */}
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              mb: 2,
+              px: 2,
+            }}>
+              <IconButton
+                onClick={scrollLeft}
+                disabled={!canScrollLeft}
                 sx={{
-                  height: '100%',
-                  borderRadius: 3,
-                  boxShadow: { xs: '0 6px 20px rgba(0,0,0,0.08)', md: '0 12px 40px rgba(0,0,0,0.10)' },
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  p: { xs: 2.5, md: 3 },
-                  bgcolor: theme.palette.background.default,
-                  transition: 'all 0.3s ease',
-                  border: '1px solid',
-                  borderColor: 'transparent',
-                  '&:hover': {
-                    transform: 'translateY(-6px)',
-                    boxShadow: '0 14px 44px rgba(0,0,0,0.14)',
-                    borderColor: theme.palette.primary.main,
-                    '& .feature-icon': {
-                      transform: 'scale(1.06) rotate(3deg)',
-                      color: theme.palette.primary.main,
-                    },
+                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                  color: theme.palette.primary.main,
+                  '&:disabled': {
+                    bgcolor: alpha(theme.palette.text.disabled, 0.1),
+                    color: theme.palette.text.disabled,
                   },
+                  '&:hover': {
+                    bgcolor: alpha(theme.palette.primary.main, 0.2),
+                  }
                 }}
               >
-                <Box
-                  className="feature-icon"
-                  aria-hidden
-                  sx={{
-                    mb: 2,
-                    transition: 'all 0.25s ease',
-                    p: 1,
-                    borderRadius: '50%',
-                    bgcolor: alpha(theme.palette.primary.main, 0.08),
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                <ArrowBackIosIcon fontSize="small" />
+              </IconButton>
+
+              {/* Indicadores de posição */}
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                {features.map((_, index) => (
+                  <Box
+                    key={index}
+                    onClick={() => scrollToIndex(index)}
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: currentIndex === index 
+                        ? theme.palette.primary.main 
+                        : alpha(theme.palette.text.secondary, 0.3),
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        transform: 'scale(1.2)',
+                      }
+                    }}
+                  />
+                ))}
+              </Box>
+
+              <IconButton
+                onClick={scrollRight}
+                disabled={!canScrollRight}
+                sx={{
+                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                  color: theme.palette.primary.main,
+                  '&:disabled': {
+                    bgcolor: alpha(theme.palette.text.disabled, 0.1),
+                    color: theme.palette.text.disabled,
+                  },
+                  '&:hover': {
+                    bgcolor: alpha(theme.palette.primary.main, 0.2),
+                  }
+                }}
+              >
+                <ArrowForwardIosIcon fontSize="small" />
+              </IconButton>
+            </Box>
+
+            {/* Carrossel */}
+            <Box
+              ref={scrollRef}
+              sx={{
+                display: 'flex',
+                gap: 2,
+                overflowX: 'auto',
+                scrollSnapType: 'x mandatory',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehaviorX: 'contain',
+                px: 2,
+                pb: 2,
+                '&::-webkit-scrollbar': {
+                  display: 'none',
+                },
+                scrollbarWidth: 'none',
+              }}
+            >
+              {features.map((f, i) => (
+                <motion.div
+                  key={f.title}
+                  initial={reduced ? false : { opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ delay: i * 0.08, duration: 0.55 }}
+                  style={{ 
+                    scrollSnapAlign: 'center',
+                    minWidth: '85%',
+                    maxWidth: '85%',
                   }}
                 >
-                  {f.icon}
-                </Box>
-                <CardContent sx={{ p: 0, flexGrow: 1 }}>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
+                  <Card
                     sx={{
-                      fontWeight: 800,
-                      fontSize: { xs: '1rem', md: '1.1rem' },
-                      lineHeight: 1.3,
-                      mb: 1.5,
+                      height: '100%',
+                      borderRadius: 3,
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.08)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      p: 3,
+                      bgcolor: theme.palette.background.default,
+                      transition: 'all 0.3s ease',
+                      border: '1px solid',
+                      borderColor: 'transparent',
                     }}
                   >
-                    {f.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ lineHeight: 1.6, fontSize: { xs: '0.95rem', md: '0.95rem' } }}
+                    <Box
+                      className="feature-icon"
+                      aria-hidden
+                      sx={{
+                        mb: 2,
+                        transition: 'all 0.25s ease',
+                        p: 1,
+                        borderRadius: '50%',
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {f.icon}
+                    </Box>
+                    <CardContent sx={{ p: 0, flexGrow: 1 }}>
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{
+                          fontWeight: 800,
+                          fontSize: '1rem',
+                          lineHeight: 1.3,
+                          mb: 1.5,
+                        }}
+                      >
+                        {f.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ lineHeight: 1.6, fontSize: '0.95rem' }}
+                      >
+                        {f.description}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </Box>
+
+            {/* Dica de swipe */}
+            <Typography
+              variant="caption"
+              align="center"
+              sx={{
+                display: 'block',
+                mt: 2,
+                color: theme.palette.text.secondary,
+                fontStyle: 'italic',
+              }}
+            >
+              👆 Deslize ou use as setas para ver mais
+            </Typography>
+          </Box>
+        ) : (
+          /* Grid desktop */
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 4,
+              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+              mt: 2,
+            }}
+          >
+            {features.map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={reduced ? false : { opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: i * 0.08, duration: 0.55 }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    borderRadius: 3,
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.10)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    p: 3,
+                    bgcolor: theme.palette.background.default,
+                    transition: 'all 0.3s ease',
+                    border: '1px solid',
+                    borderColor: 'transparent',
+                    '&:hover': {
+                      transform: 'translateY(-6px)',
+                      boxShadow: '0 14px 44px rgba(0,0,0,0.14)',
+                      borderColor: theme.palette.primary.main,
+                      '& .feature-icon': {
+                        transform: 'scale(1.06) rotate(3deg)',
+                        color: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                >
+                  <Box
+                    className="feature-icon"
+                    aria-hidden
+                    sx={{
+                      mb: 2,
+                      transition: 'all 0.25s ease',
+                      p: 1,
+                      borderRadius: '50%',
+                      bgcolor: alpha(theme.palette.primary.main, 0.08),
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
                   >
-                    {f.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </Box>
+                    {f.icon}
+                  </Box>
+                  <CardContent sx={{ p: 0, flexGrow: 1 }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{
+                        fontWeight: 800,
+                        fontSize: '1.1rem',
+                        lineHeight: 1.3,
+                        mb: 1.5,
+                      }}
+                    >
+                      {f.title}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ lineHeight: 1.6, fontSize: '0.95rem' }}
+                    >
+                      {f.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </Box>
+        )}
 
         {/* Seção de destaque */}
         <Box
@@ -227,7 +458,12 @@ export default function Features() {
           <Typography
             variant="h4"
             gutterBottom
-            sx={{ fontWeight: 800, color: theme.palette.primary.main, mb: 1.5, fontSize: { xs: '1.4rem', md: '2rem' } }}
+            sx={{ 
+              fontWeight: 800, 
+              color: theme.palette.primary.main, 
+              mb: 1.5, 
+              fontSize: { xs: '1.4rem', md: '2rem' } 
+            }}
           >
             🎯 Resultados Únicos e Personalizados
           </Typography>

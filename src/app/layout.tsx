@@ -40,7 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <title>NutriFlow - Sua Plataforma Completa de Nutrição Inteligente | Lina IA Nutricionista</title>
         <meta
           name="description"
-          content="🚀 NutriFlow é seu SaaS inovador de nutrição com Lina, sua nutricionista virtual IA. Análise de imagens, chat personalizado, e-book de marmitas e muito mais. Plano mensal R$ 97 ou anual R$ 697 com 7 dias grátis."
+          content="Plataforma completa de nutrição inteligente com Lina, sua nutricionista virtual IA. Análise de imagens, chat personalizado, e-book de marmitas e muito mais. Mensal R$ 29,90 ou anual R$ 197 com 7 dias grátis."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href="https://nutriflow.cloud/" />
@@ -103,7 +103,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 {
                   "@type": "Offer",
                   name: "NutriFlow Mensal",
-                  price: "97.00",
+                  price: "29.90",
                   priceCurrency: "BRL",
                   url: "https://pay.kiwify.com.br/SEyg6iA",
                   availability: "https://schema.org/InStock",
@@ -113,12 +113,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 {
                   "@type": "Offer",
                   name: "NutriFlow Anual",
-                  price: "697.00",
+                  price: "197.00",
                   priceCurrency: "BRL", 
                   url: "https://pay.kiwify.com.br/6hOMVb2",
                   availability: "https://schema.org/InStock",
                   priceValidUntil: "2025-12-31",
-                  description: "Plano anual com economia significativa - apenas R$ 58/mês"
+                  description: "Plano anual com economia significativa - apenas R$ 16,40/mês"
                 }
               ],
               aggregateRating: {
@@ -181,7 +181,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   name: "Como a Lina funciona? É realmente inteligente?",
                   acceptedAnswer: {
                     "@type": "Answer",
-                    text: "A Lina é nossa assistente nutricional baseada em IA GPT-4, treinada especificamente para nutrição. Ela analisa suas fotos de refeições usando visão computacional avançada, identifica ingredientes, calcula macronutrientes e oferece orientações personalizadas."
+                    text: "A Lina é nossa assistente nutricional baseada em inteligência artificial avançada, treinada especificamente para nutrição. Ela analisa suas fotos de refeições usando visão computacional, identifica ingredientes, calcula macronutrientes e oferece orientações personalizadas."
                   }
                 },
                 {
@@ -285,29 +285,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
             {children}
           </SnackbarProvider>
         </ThemeProvider>
-
-        {/* Crisp Chat - Apenas em produção */}
-        {process.env.NODE_ENV === 'production' && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.$crisp = [];
-                window.CRISP_WEBSITE_ID = "${process.env.NEXT_PUBLIC_CRISP_ID || 'SEU_CRISP_ID'}";
-                (function() {
-                  const d = document;
-                  const s = d.createElement("script");
-                  s.src = "https://client.crisp.chat/l.js";
-                  s.async = true;
-                  d.getElementsByTagName("head")[0].appendChild(s);
-                })();
-
-                // Personalizar o chat
-                window.$crisp.push(["set", "user:nickname", ["Visitante NutriFlow"]]);
-                window.$crisp.push(["set", "session:segments", [["nutriflow-visitor"]]]);
-              `,
-            }}
-          />
-        )}
 
         {/* Schema.org BreadcrumbList - Para SEO */}
         <script

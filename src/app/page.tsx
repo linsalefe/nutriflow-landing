@@ -5,7 +5,6 @@ import React from 'react';
 import { Container, Box } from '@mui/material';
 import Header from '../components/landing/Header';
 import Hero from '../components/landing/Hero';
-import FloatingCTA from '../components/landing/FloatingCTA';
 import TrustBadges from '../components/landing/TrustBadges';
 import Features from '../components/landing/Features';
 import Testimonials from '../components/landing/Testimonials';
@@ -19,7 +18,6 @@ export default function HomePage() {
     <>
       <Header />
       <Hero />
-      <FloatingCTA />
       <Container maxWidth="lg" disableGutters>
         <Box component="main">
           <TrustBadges />
